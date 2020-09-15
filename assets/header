@@ -1,0 +1,13 @@
+function header() {
+local IFS=""
+text=('' 'o    o          o   .oPYo.' "8b   8          8   8    8" "8\`b  8 .oPYo.  o8P o8YooP\' .oPYo. odYo." "8 \`b 8 8oooo8   8   8      8oooo8 8\' \`8" "8  \`b8 8.       8   8      8.     8   8" "8   \`8 \`Yooo\'   8   8      \`Yooo\' 8   8" "..:::..:.....:::..::..::::::.....:..::.." "::::::::::::::::::::::::::::::::::::::::" "::::::::::::::::::::::::::::::::::::::::")
+color=("18" "24" "30" "36" "42" "48")
+i=0
+while (($i < ${#text[@]})) ;do
+	printf ${text[$i]}"\n"
+	tput setaf ${color[5 - $i/2]}
+	((++i))
+done
+tput init
+}
+header
