@@ -1,10 +1,35 @@
+##		PREREQUISITES
+
+# Sudo rights
+if [ "$EUID" -ne 0 ]
+then
+	echo "Please run as root (sudo bash summary.sh)"
+	exit 1
+fi
+
+# Packages
+pkg=('fping' 'nmap' 'tput' 'arp')
+for bin in ${pkg[@]}
+do
+	if [ -x "$(command -v $bin)" ]
+	then
+		continue
+	else
+		echo "ERROR: $bin does not seem to be installed."
+		echo "Please download $bin using your package manager!"
+		exit 1
+	fi
+done
+
+
+
 
 ##		 FUNCTIONS
 
 # Ping network and list reachable hosts
 function pingall() {
 	ping -b -c 5 255.255.255.255 &>/dev/null
-	netmasks=`sudo arp -an | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d '.' -f1,2 | uniq`
+	netmasks=`arp -an | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d '.' -f1,2 | uniq`
 }
 
 # Attempt to discover hosts using ICMP
@@ -23,7 +48,7 @@ for ip in ${IPS[@]}
 do
 	echo "----- $ip -----"
 	#nmap -v -A -Pn $ip # heavy Scan taking ages
-	nmap -v -A $ip
+	nmap -A $ip
 	echo
 done
 }
@@ -61,6 +86,9 @@ function menu() {
 	tput sgr0
 	tput rc
 }
+
+
+
 
 ##		 EXECUTE
 tput smcup
