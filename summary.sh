@@ -28,11 +28,22 @@ then
 fi
 
 # Retreive and install dependencies
-if [ ! -d "assets/theHarvest" ]
+dep=('theHarvester' 'Tsunami')
+assets='assets/'
+dpath=${assets}'dependencies/'
+if [ ! -d "$dpath" ]
 then
-	bash assets/theHarvest
+	mkdir $dpath
 fi
-exit
+for d in ${dep[@]}
+do
+	if [ ! -d "$dpath$d" ]
+	then
+		bash $assets$d
+	fi
+done
+
+
 
 
 ##		 FUNCTIONS
@@ -83,9 +94,9 @@ function menu() {
 	echo "M A I N - M E N U"
 	tput sgr0
 	tput cup 14 8
-	echo "1. Scan open ports"
+	echo "1. 🔎 Scan Network"
 	tput cup 15 8
-	echo "2. empty"
+	echo "2. 🌊 Tsunami"
 	tput cup 16 8
 	echo "3. empty"
 	tput cup 17 8

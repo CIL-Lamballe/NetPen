@@ -1,0 +1,5 @@
+function get_tsunami() {
+	git clone https://github.com/google/tsunami-security-scanner.git assets/dependencies/Tsunami
+	#cd assets/dependencies/Tsunami
+}
+get_tsunami
