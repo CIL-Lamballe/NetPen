@@ -1,14 +1,14 @@
 ##		PREREQUISITES
 
 # Sudo rights
-if [ "$EUID" -ne 0 ]
+if [ "$EUID" -eq 0 ]
 then
-	echo "Please run as root (sudo bash summary.sh)"
+	echo "Please do not run the script as root!"
 	exit 1
 fi
 
 # Packages
-pkg=('fping' 'nmap' 'tput' 'arp')
+pkg=('git' 'fping' 'nmap' 'tput')
 for bin in ${pkg[@]}
 do
 	if [ -x "$(command -v $bin)" ]
@@ -20,8 +20,19 @@ do
 		exit 1
 	fi
 done
+if [ ! -x "$(sudo bash -c 'command -v arp')" ]
+then
+	echo "ERROR: arp does not seem to be installed."
+	echo "Please download arp using your package manager!"
+	exit 1
+fi
 
-
+# Retreive and install dependencies
+if [ ! -d "assets/theHarvest" ]
+then
+	bash assets/theHarvest
+fi
+exit
 
 
 ##		 FUNCTIONS
@@ -29,7 +40,7 @@ done
 # Ping network and list reachable hosts
 function pingall() {
 	ping -b -c 5 255.255.255.255 &>/dev/null
-	netmasks=`arp -an | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d '.' -f1,2 | uniq`
+	netmasks=`sudo arp -an | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d '.' -f1,2 | uniq`
 }
 
 # Attempt to discover hosts using ICMP
@@ -47,8 +58,8 @@ function portscan() {
 for ip in ${IPS[@]}
 do
 	echo "----- $ip -----"
-	#nmap -v -A -Pn $ip # heavy Scan taking ages
-	nmap -A $ip
+	#nmap -v -A -Pn $ip | tee open_ports.log # heavy Scan taking ages
+	nmap -A $ip | tee open_ports.log
 	echo
 done
 }
