@@ -1,4 +1,7 @@
-
+[![GPL3 License][license-shield]][license-url]
+![Commits](https://img.shields.io/github/commit-activity/m/CIL-Lamballe/NetPen)
+[![Contributors][contributors-shield]][contributors-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 <br />
@@ -89,3 +92,18 @@ Distributed under the GPL3 License. See `LICENSE` for more information.
 CIL Lamballe - [@cil_lamballe](https://twitter.com/cil_lamballe) - contact@cil-lamballe.com
 
 Project Link: [https://github.com/CIL-Lamballe](https://github.com/CIL-Lamballe)
+
+
+
+## Acknowledgements
+
+* [Ant0wan](https://github.com/Ant0wan)
+
+
+
+[contributors-shield]: https://img.shields.io/github/contributors/CIL-Lamballe/NetPen
+[contributors-url]: https://github.com/CIL-Lamballe/NetPen/graphs/contributors
+[license-shield]: https://img.shields.io/github/license/CIL-Lamballe/NetPen
+[license-url]: https://github.com/CIL-Lamballe/NetPen/LICENSE
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat&logo=appveyor&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/company/cil-lamballe
