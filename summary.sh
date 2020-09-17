@@ -1,3 +1,6 @@
+## DEBUG
+#set -x
+
 ##		PREREQUISITES
 
 # Sudo rights
@@ -29,20 +32,24 @@ fi
 
 # Retreive and install dependencies
 dep=('theHarvester' 'Tsunami')
+dep_repo=('https://github.com/laramies/theHarvester' 'https://github.com/google/tsunami-security-scanner.git')
 assets='assets/'
 dpath=${assets}'dependencies/'
 if [ ! -d "$dpath" ]
 then
 	mkdir $dpath
 fi
+i=0
 for d in ${dep[@]}
 do
 	if [ ! -d "$dpath$d" ]
 	then
-		bash $assets$d
+		git clone --recurse-submodules ${dep_repo[$i]} $dpath$d
+		((++i))
 	fi
 done
 
+exit
 
 
 

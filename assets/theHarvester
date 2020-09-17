@@ -1,9 +1,5 @@
-function install_theHarvester() {
-	git clone https://github.com/laramies/theHarvester assets/dependencies/theHarvester
-	cd assets/dependencies/theHarvester
-	python3 -m pip install pipenv
-	pipenv install
-	pipenv shell
-	python3 theHarvester.py -h
-}
-install_theHarvester
+#git clone https://github.com/laramies/theHarvester
+#Install #python3 -m pip install pipenv
+#Use	 #pipenv install
+#Use	 #pipenv shell
+#Use	 #python3 theHarvester.py -h
