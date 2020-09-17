@@ -49,7 +49,7 @@ do
 	fi
 done
 
-exit
+unset i dep_repo pkg
 
 
 
