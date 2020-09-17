@@ -1,3 +1,4 @@
 .*
-!/.gitignore
+open_ports.log
 assets/dependencies
+!/.gitignore

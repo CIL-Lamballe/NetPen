@@ -4,7 +4,7 @@ text=('' 'o    o          o   .oPYo.' "8b   8          8   8    8" "8\`b  8 .oPY
 color=("18" "24" "30" "36" "42" "48")
 i=0
 while (($i < ${#text[@]})) ;do
-	printf ${text[$i]}"\n"
+	printf " "${text[$i]}"\n"
 	tput setaf ${color[5 - $i/2]}
 	((++i))
 done

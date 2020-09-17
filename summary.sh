@@ -3,7 +3,7 @@
 # Sudo rights
 if [ "$EUID" -eq 0 ]
 then
-	echo "Please do not run the script as root!"
+	printf "Please do not run the script as root!\n"
 	exit 1
 fi
 
@@ -15,15 +15,15 @@ do
 	then
 		continue
 	else
-		echo "ERROR: $bin does not seem to be installed."
-		echo "Please download $bin using your package manager!"
+		printf "ERROR: $bin does not seem to be installed.\n"
+		printf "Please download $bin using your package manager!\n"
 		exit 1
 	fi
 done
 if [ ! -x "$(sudo bash -c 'command -v arp')" ]
 then
-	echo "ERROR: arp does not seem to be installed."
-	echo "Please download arp using your package manager!"
+	printf "ERROR: arp does not seem to be installed.\n"
+	printf "Please download arp using your package manager!\n"
 	exit 1
 fi
 
@@ -66,13 +66,17 @@ function discover() {
 
 # Scan for open ports
 function portscan() {
-for ip in ${IPS[@]}
-do
-	echo "----- $ip -----"
-	#nmap -v -A -Pn $ip | tee open_ports.log # heavy Scan taking ages
-	nmap -A $ip | tee open_ports.log
-	echo
-done
+	local logfile='open_ports.log'
+	> $logfile
+	for ip in ${IPS[@]}
+	do
+		(	echo "----- $ip -----";
+			#nmap -A $ip;
+			nmap -A -Pn $ip;
+			echo
+		) | tee -a $logfile
+		#nmap -v -A -Pn $ip | tee -a $logfile # heavy Scan taking ages
+	done
 }
 
 function scanopenports() {
@@ -85,24 +89,25 @@ function scanopenports() {
 # Display menu
 function menu() {
 	tput clear
+	y=10; x=11
 	tput cup 0 2
-	bash ./assets/header
-	tput cup 12 8
+	bash ./${assets}'header'
+	tput cup $x $y
 	tput setaf 3
 	tput sgr0
 	tput rev
-	echo "M A I N - M E N U"
+	printf "M A I N - M E N U"
 	tput sgr0
-	tput cup 14 8
-	echo "1. 🔎 Scan Network"
-	tput cup 15 8
-	echo "2. 🌊 Tsunami"
-	tput cup 16 8
-	echo "3. empty"
-	tput cup 17 8
-	echo "4. Quit"
+	tput cup $(($x + 2)) $y
+	printf "1. 🔎 Scan Network"
+	tput cup $(($x + 3)) $y
+	printf "2. 🌊 Tsunami"
+	tput cup $(($x + 4)) $y
+	printf "3. empty"
+	tput cup $(($x + 5)) $y
+	printf "4. Quit"
 	tput bold
-	tput cup 19 8
+	tput cup $(($x + 7)) $y
 	read -p "Enter your choice [1-4] " CHOICE
 	tput clear
 	tput sgr0
@@ -116,19 +121,12 @@ function menu() {
 tput smcup
 CHOICE=0
 menu
-if [ $CHOICE -eq 4 ]
-then
-	tput rmcup
-	exit
-else
-	case $CHOICE in
-		1)
-			tput cup 0 0
-			scanopenports
-			;;
-		2 | 3 | *)
-			echo "empty"
-			;;
-	esac
-fi
+case $CHOICE in
+	1)
+		tput cup 0 0
+		scanopenports
+		;;
+	2 | 3 | *)
+		;;
+esac
 tput rmcup
