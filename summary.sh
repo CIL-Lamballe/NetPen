@@ -77,14 +77,14 @@ function discover() {
 
 # Scan for open ports
 function portscan() {
-	local logfile='open_ports.log'
-	> $logfile
+	OPENPORTS_LOG='open_ports.log'
+	> $OPENPORTS_LOG
 	for ip in ${IPS[@]}
 	do
 		(	echo "----- $ip -----";
 			nmap -A -Pn $ip;
 			echo
-		) | tee -a $logfile
+		) | tee -a $OPENPORTS_LOG
 	done
 }
 
@@ -97,33 +97,42 @@ function scanopenports() {
 
 # Check domain Internet footprint in order to find sensitive information
 function scantheweb() {
-	local PREVWD="$PWD/"
-	local log=${PREVWD}'footprint.log'
+	local prevwd="$PWD/"
+	local log=${prevwd}'internet_footprint.log'
 	> $log
 	tput clear
-	cd ${dpath}${dep[0]}
 	printf "This could take a while..."
+	cd ${dpath}${dep[0]}
         python3 theHarvester.py -d $1 -l 300 -b all | tail -n +17 > $log
-	cat $log | less
 	cd -
+	cat $log | more
 }
 
 function scandomain() {
 	tput clear
-	cd ~/NetPen/assets/dependencies/theHarvester
-	pipenv install
-	pipenv shell
-	#cat report.tmp | grep -i domain | cut -d ':' -f2 | grep -E -o "(\w+[.]\w+)+"
-	#cat Report  | grep -i domain | cut -d ':' -f2 | grep -E -o "(\w+[.]\w+)+" | sort | uniq
-	sleep 5
+	if [ ! $OPENPORTS_LOG ]
+	then
+		printf "Scan network before scanning domain!\n(choose 1. in main menu)\n"
+		read -n 1
+		tput rmcup
+		exit 2
+	fi
+	local prevwd="$PWD/"
+	local log=${prevwd}'domain_found.log'
+	> $log
+	local domains=`cat $OPENPORTS_LOG | grep -i domain | cut -d ':' -f2 | grep -E -o "(\w+[.]\w+)+" | sort | uniq`
+	printf "This could take a while..."
+	cd ${dpath}${dep[0]}
+	(
+		for d in ${domains[@]}
+		do
+			#echo domain: $d
+        		python3 theHarvester.py -d $d -l 300 -b all | tail -n +17 | grep -E -o "(\w+[.]\w+)+"
+		done
+	) | sort | uniq > domain_found.log
 	cd -
-	#pipenv shell
-	#echo "exit" | (pipenv shell)
-	#tput clear
-	#python3 theHarvester.py -h
-	#clear
-	#exit
-	#rm Pipfile Pipfile.lock
+	cat $log | more
+	sleep 15 # DEBUG
 }
 
 # Display menu
@@ -140,16 +149,16 @@ function menu() {
 	tput sgr0
 	tput cup $(($x + 2)) $y
 	printf "1. 🔎 Scan Network"
-	tput cup $(($x + 3)) $y
-	printf "2. 🌐 Internet Footprint"
 	tput cup $(($x + 4)) $y
-	printf "3. Scan a domain"
-	tput cup $(($x + 5)) $y
-#	printf "3. 🌊 Tsunami"
-#	tput cup $(($x + 5)) $y
-	printf "4. Quit"
+	printf "2. 👣 Internet Footprint"
+	tput cup $(($x + 6)) $y
+	printf "3. 🌐 Find Domains"
+	tput cup $(($x + 8)) $y
+	printf "4. 🌊 Tsunami"
+	tput cup $(($x + 10)) $y
+	printf "5. Quit"
 	tput bold
-	tput cup $(($x + 7)) $y
+	tput cup $(($x + 13)) $y
 	read -p "Enter your choice [1-4] " CHOICE
 	tput clear
 	tput sgr0
@@ -175,8 +184,7 @@ case $CHOICE in
 		;;
 	3)
 		tput cup 0 0
-		read -p "Enter domain you wish to scan: " domain
-		scandomain $domain
+		scandomain
 		;;
 	*)
 		;;
