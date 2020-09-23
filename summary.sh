@@ -49,6 +49,10 @@ do
 	fi
 done
 
+# Install additional packages
+python3 -m pip install -r ${dpath}/${dep[0]}/requirements/dev.txt &> /dev/null
+#python3 -m pip install -r ${dpath}/${dep[1]}/requirements/base.txt
+
 unset i dep_repo pkg
 
 
@@ -78,11 +82,9 @@ function portscan() {
 	for ip in ${IPS[@]}
 	do
 		(	echo "----- $ip -----";
-			#nmap -A $ip;
 			nmap -A -Pn $ip;
 			echo
 		) | tee -a $logfile
-		#nmap -v -A -Pn $ip | tee -a $logfile # heavy Scan taking ages
 	done
 }
 
@@ -91,6 +93,37 @@ function scanopenports() {
 	pingall
 	discover
 	portscan
+}
+
+# Check domain Internet footprint in order to find sensitive information
+function scantheweb() {
+	local PREVWD="$PWD/"
+	local log=${PREVWD}'footprint.log'
+	> $log
+	tput clear
+	cd ${dpath}${dep[0]}
+	printf "This could take a while..."
+        python3 theHarvester.py -d $1 -l 300 -b all | tail -n +17 > $log
+	cat $log | less
+	cd -
+}
+
+function scandomain() {
+	tput clear
+	cd ~/NetPen/assets/dependencies/theHarvester
+	pipenv install
+	pipenv shell
+	#cat report.tmp | grep -i domain | cut -d ':' -f2 | grep -E -o "(\w+[.]\w+)+"
+	#cat Report  | grep -i domain | cut -d ':' -f2 | grep -E -o "(\w+[.]\w+)+" | sort | uniq
+	sleep 5
+	cd -
+	#pipenv shell
+	#echo "exit" | (pipenv shell)
+	#tput clear
+	#python3 theHarvester.py -h
+	#clear
+	#exit
+	#rm Pipfile Pipfile.lock
 }
 
 # Display menu
@@ -108,10 +141,12 @@ function menu() {
 	tput cup $(($x + 2)) $y
 	printf "1. 🔎 Scan Network"
 	tput cup $(($x + 3)) $y
-	printf "2. 🌊 Tsunami"
+	printf "2. 🌐 Internet Footprint"
 	tput cup $(($x + 4)) $y
-	printf "3. empty"
+	printf "3. Scan a domain"
 	tput cup $(($x + 5)) $y
+#	printf "3. 🌊 Tsunami"
+#	tput cup $(($x + 5)) $y
 	printf "4. Quit"
 	tput bold
 	tput cup $(($x + 7)) $y
@@ -124,7 +159,7 @@ function menu() {
 
 
 
-##		 EXECUTE
+##	EXECUTE
 tput smcup
 CHOICE=0
 menu
@@ -133,7 +168,17 @@ case $CHOICE in
 		tput cup 0 0
 		scanopenports
 		;;
-	2 | 3 | *)
+	2)
+		tput cup 0 0
+		read -p "Enter your public/private domain name: " webdomain
+		scantheweb $webdomain
+		;;
+	3)
+		tput cup 0 0
+		read -p "Enter domain you wish to scan: " domain
+		scandomain $domain
+		;;
+	*)
 		;;
 esac
 tput rmcup
