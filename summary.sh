@@ -93,6 +93,8 @@ function scanopenports() {
 	pingall
 	discover
 	portscan
+	local possible_hosts=`cat $OPENPORTS_LOG | grep -i "name" | sed -n -e 's/^.*name: //p' | grep -o -E "[a-zA-Z0-9]+" | sort | uniq`
+	echo ${possible_hosts[@]} > possible_hosts.log
 }
 
 # Check domain Internet footprint in order to find sensitive information
