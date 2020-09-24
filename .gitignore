@@ -1,7 +1,4 @@
 .*
-possible_hosts.log
-domain_found.log
-open_ports.log
-internet_footprint.log
+*.log
 assets/dependencies
 !/.gitignore

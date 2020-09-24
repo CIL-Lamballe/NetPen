@@ -88,6 +88,12 @@ function portscan() {
 	done
 }
 
+function scanports() {
+	local log="ports_$1.log"
+	> $log
+	nmap -A -Pn $1 | tee -a $log
+}
+
 function scanopenports() {
 	tput clear
 	pingall
@@ -158,10 +164,12 @@ function menu() {
 	tput cup $(($x + 8)) $y
 	printf "4. 🌊 Tsunami"
 	tput cup $(($x + 10)) $y
-	printf "5. Quit"
+	printf "5. ⚓ Scan Ports"
+	tput cup $(($x + 12)) $y
+	printf "6. Quit"
 	tput bold
-	tput cup $(($x + 13)) $y
-	read -p "Enter your choice [1-4] " CHOICE
+	tput cup $(($x + 14)) $y
+	read -p "Enter your choice [1-6] " CHOICE
 	tput clear
 	tput sgr0
 	tput rc
@@ -187,6 +195,11 @@ case $CHOICE in
 	3)
 		tput cup 0 0
 		scandomain
+		;;
+	5)
+		tput cup 0 0
+		read -p "Enter IP you want to scan: " iptoscan
+		scanports $iptoscan
 		;;
 	*)
 		;;
