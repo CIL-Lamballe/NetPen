@@ -90,7 +90,7 @@ function portscan() {
 function scanports() {
 	local log="ports_$1.log"
 	> $log
-	nmap -A -Pn $1 | tee -a $log
+	nmap -A $1 | tee -a $log
 }
 
 function scanopenports() {
