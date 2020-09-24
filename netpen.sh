@@ -77,7 +77,6 @@ function discover() {
 
 # Scan for open ports
 function portscan() {
-	OPENPORTS_LOG='open_ports.log'
 	> $OPENPORTS_LOG
 	for ip in ${IPS[@]}
 	do
@@ -120,7 +119,9 @@ function scandomain() {
 	tput clear
 	if [ ! $OPENPORTS_LOG ]
 	then
-		printf "Scan network before scanning domain!\n(choose 1. in main menu)\n"
+		tput setaf 196
+		printf "Scan network before scanning domain!\n(choose: \"1. Network Scan\" from in main menu)\n"
+		tput init
 		read -n 1
 		tput rmcup
 		exit 2
@@ -129,18 +130,22 @@ function scandomain() {
 	local log=${prevwd}'domain_found.log'
 	> $log
 	local domains=`cat $OPENPORTS_LOG | grep -i domain | cut -d ':' -f2 | grep -E -o "(\w+[.]\w+)+" | sort | uniq`
-	printf "This could take a while..."
+	local domains+=`cat $OPENPORTS_LOG | grep -E -o "((\w+[.])+\w+)+" | grep -E -v "[0-9]+[.][0-9]+" | sort | uniq`
 	cd ${dpath}${dep[0]}
 	(
 		for d in ${domains[@]}
 		do
-			#echo domain: $d
-        		python3 theHarvester.py -d $d -l 300 -b all | tail -n +17 | grep -E -o "(\w+[.]\w+)+"
+			tput setaf 226
+			printf "Scanning domain:"
+			tput bold
+			tput setaf 87
+			printf " $d\n"
+			tput init
+        		python3 theHarvester.py -d $d -l 300 -b all | grep -v '\*'
+			echo
 		done
-	) | sort | uniq > domain_found.log
+	) | tee -a $log
 	cd -
-	cat $log | more
-	sleep 15 # DEBUG
 }
 
 # Display menu
@@ -181,6 +186,7 @@ function menu() {
 ##	EXECUTE
 tput smcup
 CHOICE=0
+OPENPORTS_LOG='open_ports.log'
 menu
 case $CHOICE in
 	1)
