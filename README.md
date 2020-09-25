@@ -13,7 +13,7 @@
   <h1 align="center">NetPen</h1>
 
   <p align="center">
-    Network automated penetration tests.
+    An automated network scanning tool.
     <br />
     <a href="https://github.com/CIL-Lamballe/NetPen">View Demo</a>
     ·
