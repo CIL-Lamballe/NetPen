@@ -81,7 +81,15 @@ function portscan() {
 	for ip in ${IPS[@]}
 	do
 		(	echo "----- $ip -----";
-			nmap -A -Pn $ip;
+			if [ "$1" -eq 1 ]
+			then
+				nmap $ip
+			elif [ "$1" -eq 2 ]
+			then
+				nmap -A $ip
+			else
+				nmap -A -Pn $ip;
+			fi
 			echo
 		) | tee -a $OPENPORTS_LOG
 	done
@@ -93,13 +101,44 @@ function scanports() {
 	nmap -A $1 | tee -a $log
 }
 
-function scanopenports() {
+function submenu_scan() {
 	tput clear
-	pingall
-	discover
-	portscan
-	local possible_hosts=`cat $OPENPORTS_LOG | grep -i "name" | sed -n -e 's/^.*name: //p' | grep -o -E "[a-zA-Z0-9]+" | sort | uniq`
-	echo ${possible_hosts[@]} > possible_hosts.log
+	y=6; x=11
+	tput cup 0 2
+	bash ./${assets}'header'
+	tput cup $x $y
+	tput setaf 3
+	tput sgr0
+	tput rev
+	printf "S E L E C T   S C A N   T Y P E"
+	y=10; x=11
+	tput sgr0
+	tput cup $(($x + 2)) $y
+	printf "1. Shallow - minutes"
+	tput cup $(($x + 4)) $y
+	printf "2. Normal - hours"
+	tput cup $(($x + 6)) $y
+	printf "3. Deep - many hours"
+	tput cup $(($x + 8)) $y
+
+}
+
+function scanopenports() {
+	submenu_scan
+	tput bold
+	read -n 1 -p "Enter your choice [1-3] " scantype
+	tput clear
+	tput sgr0
+	tput rc
+	tput cup 0 0
+	if [ "$scantype" -lt 4 ] && [ "$scantype" -gt 0 ]
+	then
+		pingall
+		discover
+		portscan $scantype
+		local possible_hosts=`cat $OPENPORTS_LOG | grep -i "name" | sed -n -e 's/^.*name: //p' | grep -o -E "[a-zA-Z0-9]+" | sort | uniq`
+		echo ${possible_hosts[@]} > possible_hosts.log
+	fi
 }
 
 # Check domain Internet footprint in order to find sensitive information
