@@ -206,7 +206,7 @@ function menu() {
 	tput cup $(($x + 6)) $y
 	printf "3. 🌐 Find Domains"
 	tput cup $(($x + 8)) $y
-	printf "4. 🌊 Tsunami"
+	printf "4. 🌊 Tsunami (not working yet)"
 	tput cup $(($x + 10)) $y
 	printf "5. ⚓ Scan Ports"
 	tput cup $(($x + 12)) $y
