@@ -21,6 +21,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -yq --no-install-recommends \
 	git \
 	nmap \
 	python3 \
+	python3-pip \
 	ca-certificates \
 	tzdata
 
@@ -34,6 +35,8 @@ RUN mkdir /opt/netpen/ /opt/netpen/assets/ /opt/netpen/assets/dependencies
 RUN git clone https://github.com/laramies/theHarvester /opt/netpen/assets/dependencies/theHarvester
 
 WORKDIR /opt/netpen/
+
+RUN python3 -m pip install -r /opt/netpen/assets/dependencies/theHarvester/requirements/dev.txt
 
 ENV TERM=xterm-256color
 

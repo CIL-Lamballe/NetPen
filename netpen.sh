@@ -1,26 +1,6 @@
 ## DEBUG
 #set -x
 
-##		PREREQUISITES
-# Retreive and install dependencies
-#dep=('theHarvester' 'Tsunami')
-#dep_repo=('https://github.com/laramies/theHarvester' 'https://github.com/google/tsunami-security-scanner.git')
-#assets='assets/'
-#dpath=${assets}'dependencies/'
-#if [ ! -d "$dpath" ]
-#then
-#	mkdir $dpath
-#fi
-#i=0
-#for d in ${dep[@]}
-#do
-#	if [ ! -d "$dpath$d" ]
-#	then
-#		git clone --recurse-submodules ${dep_repo[$i]} $dpath$d
-#		((++i))
-#	fi
-#done
-#
 ## Install additional packages
 #python3 -m pip install -r ${dpath}/${dep[0]}/requirements/dev.txt &> /dev/null
 ##python3 -m pip install -r ${dpath}/${dep[1]}/requirements/base.txt
@@ -77,7 +57,7 @@ function submenu_scan() {
 	tput clear
 	y=6; x=11
 	tput cup 0 2
-	bash ./${assets}'header'
+	bash $PWD/assets/header
 	tput cup $x $y
 	tput setaf 3
 	tput sgr0
@@ -164,8 +144,7 @@ function menu() {
 	tput clear
 	y=10; x=11
 	tput cup 0 2
-	bash ./assets/header
-	echo $PWD
+	bash $PWD/assets/header
 	tput cup $x $y
 	tput setaf 3
 	tput sgr0
@@ -196,6 +175,7 @@ function menu() {
 
 
 ##	EXECUTE
+PWD="/opt/netpen/"
 CHOICE=0
 OPENPORTS_LOG='open_ports.log'
 tput smcup
