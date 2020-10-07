@@ -2,58 +2,30 @@
 #set -x
 
 ##		PREREQUISITES
-
-# Sudo rights
-if [ "$EUID" -eq 0 ]
-then
-	printf "Please do not run the script as root!\n"
-	exit 1
-fi
-
-# Packages
-pkg=('git' 'fping' 'nmap' 'tput')
-for bin in ${pkg[@]}
-do
-	if [ -x "$(command -v $bin)" ]
-	then
-		continue
-	else
-		printf "ERROR: $bin does not seem to be installed.\n"
-		printf "Please download $bin using your package manager!\n"
-		exit 1
-	fi
-done
-if [ ! -x "$(sudo bash -c 'command -v arp')" ]
-then
-	printf "ERROR: arp does not seem to be installed.\n"
-	printf "Please download arp using your package manager!\n"
-	exit 1
-fi
-
 # Retreive and install dependencies
-dep=('theHarvester' 'Tsunami')
-dep_repo=('https://github.com/laramies/theHarvester' 'https://github.com/google/tsunami-security-scanner.git')
-assets='assets/'
-dpath=${assets}'dependencies/'
-if [ ! -d "$dpath" ]
-then
-	mkdir $dpath
-fi
-i=0
-for d in ${dep[@]}
-do
-	if [ ! -d "$dpath$d" ]
-	then
-		git clone --recurse-submodules ${dep_repo[$i]} $dpath$d
-		((++i))
-	fi
-done
+#dep=('theHarvester' 'Tsunami')
+#dep_repo=('https://github.com/laramies/theHarvester' 'https://github.com/google/tsunami-security-scanner.git')
+#assets='assets/'
+#dpath=${assets}'dependencies/'
+#if [ ! -d "$dpath" ]
+#then
+#	mkdir $dpath
+#fi
+#i=0
+#for d in ${dep[@]}
+#do
+#	if [ ! -d "$dpath$d" ]
+#	then
+#		git clone --recurse-submodules ${dep_repo[$i]} $dpath$d
+#		((++i))
+#	fi
+#done
+#
+## Install additional packages
+#python3 -m pip install -r ${dpath}/${dep[0]}/requirements/dev.txt &> /dev/null
+##python3 -m pip install -r ${dpath}/${dep[1]}/requirements/base.txt
 
-# Install additional packages
-python3 -m pip install -r ${dpath}/${dep[0]}/requirements/dev.txt &> /dev/null
-#python3 -m pip install -r ${dpath}/${dep[1]}/requirements/base.txt
-
-unset i dep_repo pkg
+#unset i dep_repo pkg
 
 
 
@@ -192,7 +164,8 @@ function menu() {
 	tput clear
 	y=10; x=11
 	tput cup 0 2
-	bash ./${assets}'header'
+	bash ./assets/header
+	echo $PWD
 	tput cup $x $y
 	tput setaf 3
 	tput sgr0

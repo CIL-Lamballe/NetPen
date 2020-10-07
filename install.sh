@@ -1,6 +1,6 @@
 #!/bin/bash
 # Check previous install
-if [ -e $PWD/netpen ]
+if [ -e $PWD/.netpenrc ]
 then
 	printf "Netpen already installed.\n"
 	exit 1
@@ -22,26 +22,19 @@ _found_arch() {
 
 # Detect package type
 _OSTYPE_detect() {
-  _found_arch PACMAN "Arch Linux" && return
   _found_arch DPKG   "Debian GNU/Linux" && return
   _found_arch DPKG   "Ubuntu" && return
   _found_arch YUM    "CentOS" && return
   _found_arch YUM    "Red Hat" && return
   _found_arch YUM    "Fedora" && return
-  _found_arch ZYPPER "SUSE" && return
 
   [[ -z "$_OSTYPE" ]] || return
 
   if [[ "$OSTYPE" != "darwin"* ]]; then
     _error "Can't detect OS type from /etc/issue. Running fallback method."
   fi
-#  [[ -x "/usr/bin/pacman" ]]           && _OSTYPE="PACMAN" && return
   [[ -x "/usr/bin/apt-get" ]]          && _OSTYPE="DPKG" && return
   [[ -x "/usr/bin/yum" ]]              && _OSTYPE="YUM" && return
-#  [[ -x "/opt/local/bin/port" ]]       && _OSTYPE="MACPORTS" && return
-#  command -v brew >/dev/null           && _OSTYPE="HOMEBREW" && return
-#  [[ -x "/usr/bin/emerge" ]]           && _OSTYPE="PORTAGE" && return
-#  [[ -x "/usr/bin/zypper" ]]           && _OSTYPE="ZYPPER" && return
   if [[ -z "$_OSTYPE" ]]; then
     _error "No supported package manager installed on system"
     _error "(supported: apt or yum)"
@@ -78,13 +71,15 @@ _OSTYPE_detect
 if [ "$_OSTYPE" = "YUM" ]
 then
 	centos_install
-	touch /tmp/.netpen
 elif [ "$_OSTYPE" = "DPKG" ]
 then
 	debian_install
-	touch /tmp/.netpen
 else
 	printf "\n OS not supported!\n"
 	exit 1
 fi
 docker build -t netpen:v0.1-a .
+if [ $? -eq 0 ]
+then
+	touch $PWD/.netpenrc
+fi
