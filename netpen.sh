@@ -223,30 +223,35 @@ function menu() {
 
 
 ##	EXECUTE
-tput smcup
 CHOICE=0
 OPENPORTS_LOG='open_ports.log'
-menu
-case $CHOICE in
-	1)
-		tput cup 0 0
-		scanopenports
-		;;
-	2)
-		tput cup 0 0
-		read -p "Enter your public/private domain name: " webdomain
-		scantheweb $webdomain
-		;;
-	3)
-		tput cup 0 0
-		scandomain
-		;;
-	5)
-		tput cup 0 0
-		read -p "Enter IP you want to scan: " iptoscan
-		scanports $iptoscan
-		;;
-	*)
-		;;
-esac
+tput smcup
+while true
+do
+	menu
+	case $CHOICE in
+		1)
+			tput cup 0 0
+			scanopenports
+			;;
+		2)
+			tput cup 0 0
+			read -p "Enter your public/private domain name: " webdomain
+			scantheweb $webdomain
+			;;
+		3)
+			tput cup 0 0
+			scandomain
+			;;
+		5)
+			tput cup 0 0
+			read -p "Enter IP you want to scan: " iptoscan
+			scanports $iptoscan
+			;;
+		*)
+			tput rmcup
+			exit
+			;;
+	esac
+done
 tput rmcup
