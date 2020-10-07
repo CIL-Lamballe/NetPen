@@ -30,17 +30,14 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN echo "Europe/Paris" | tee /etc/timezone \
  && dpkg-reconfigure --frontend noninteractive tzdata
 
-RUN mkdir /opt/netpen/ /opt/netpen/assets/ /opt/netpen/assets/dependencies
-
-RUN git clone https://github.com/laramies/theHarvester /opt/netpen/assets/dependencies/theHarvester
+#VOLUME /opt/netpen/ /opt/netpen/assets/ /opt/netpen/assets/dependencies /opt/netpen/assets/dependencies/theHarvester
+#VOLUME /opt/netpen/
 
 WORKDIR /opt/netpen/
 
-RUN python3 -m pip install -r /opt/netpen/assets/dependencies/theHarvester/requirements/dev.txt
-
 ENV TERM=xterm-256color
 
-ENTRYPOINT ["/bin/bash", "/opt/netpen/netpen.sh"]
+#ENTRYPOINT ["/bin/bash", "/opt/netpen/netpen.sh"]
 
 # Debug
-#ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/bash"]

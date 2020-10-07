@@ -79,7 +79,7 @@ else
 	exit 1
 fi
 docker build -t netpen:v0.1-a .
-if [ $? -eq 0 ]
-then
-	touch $PWD/.netpenrc
-fi
+#if [ $? -eq 0 ]
+#then
+#	touch $PWD/.netpenrc
+#fi

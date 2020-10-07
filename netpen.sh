@@ -1,21 +1,12 @@
-## DEBUG
+#!/bin/bash
 #set -x
-
 ## Install additional packages
-#python3 -m pip install -r ${dpath}/${dep[0]}/requirements/dev.txt &> /dev/null
-##python3 -m pip install -r ${dpath}/${dep[1]}/requirements/base.txt
-
-#unset i dep_repo pkg
-
+git clone --recurse-submodules https://github.com/laramies/theHarvester $PWD/assets/dependencies/theHarvester
+python3 -m pip install -r /assets/dependencies/requirements/dev.txt &> /dev/null
+#python3 -m pip install -r ${dpath}/${dep[1]}/requirements/base.txt
 
 
 ##		 FUNCTIONS
-
-# Ping network and list reachable hosts
-function pingall() {
-	ping -b -c 5 255.255.255.255 &>/dev/null
-	netmasks=`sudo arp -an | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d '.' -f1,2 | uniq`
-}
 
 # Attempt to discover hosts using ICMP
 function discover() {
@@ -85,7 +76,13 @@ function scanopenports() {
 	tput cup 0 0
 	if [ "$scantype" -lt 4 ] && [ "$scantype" -gt 0 ]
 	then
-		pingall
+		echo $scantype
+		sleep 5
+		# Ping network and list reachable hosts
+		ping -b -c 5 255.255.255.255 &>/dev/null
+		netmasks=`arp -an | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d '.' -f1,2 | uniq`
+		echo result ${netmasks[@]}
+		sleep 5
 		discover
 		portscan $scantype
 		local possible_hosts=`cat $OPENPORTS_LOG | grep -i "name" | sed -n -e 's/^.*name: //p' | grep -o -E "[a-zA-Z0-9]+" | sort | uniq`
